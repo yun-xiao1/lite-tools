@@ -375,10 +375,15 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     allowMainClick = true; // 如果第三个参数为 true，则允许主菜单点击
   }
 
+  if (hasLiteToolsContextMenuItem(qContextMenu, title)) {
+    return;
+  }
+
   /**
    * @type {Element}
    */
   const contextItem = createContextMenuItem(qContextMenu, icon, title);
+  contextItem.dataset.liteToolsTitle = title;
   log("创建右键菜单项");
   contextItem?.style?.removeProperty("color");
   const textElement = getContextMenuTextElement(contextItem);
@@ -408,6 +413,19 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     });
   }
   qContextMenu.appendChild(contextItem);
+}
+
+/**
+ * 判断当前 QQ 右键菜单是否已经插入过同名轻量工具箱菜单项。
+ * 旧版 QQ 可能复用同一个 q-context-menu 节点，因此不能只给菜单容器打已处理标记。
+ * @param {Element} qContextMenu
+ * @param {String} title
+ * @returns {Boolean}
+ */
+function hasLiteToolsContextMenuItem(qContextMenu, title) {
+  return Array.from(qContextMenu.querySelectorAll(".lite-tools-context-menu-item")).some((item) => {
+    return item.dataset.liteToolsTitle === title || getContextMenuTextElement(item)?.textContent === title;
+  });
 }
 
 /**
@@ -467,6 +485,25 @@ function createContextMenuItem(qContextMenu, icon, title) {
 }
 
 /**
+ * 旧版 QQNT 可直接从 appimg 本地路径文件名还原 gchat 图片 URL。
+ * 新版 picData 获取失败时用它兜底，适配 9.9.20/9.9.21 一类旧 DOM。
+ * @param {String} imagePath
+ * @returns {String}
+ */
+function getLegacyPicSearchUrl(imagePath) {
+  if (!imagePath) {
+    return "";
+  }
+  const localPath = decodeURIComponent(imagePath);
+  const filePathArr = localPath.split("/");
+  const fileName = filePathArr[filePathArr.length - 1]?.split(".")?.[0]?.toUpperCase()?.replace("_0", "");
+  if (!fileName) {
+    return "";
+  }
+  return `https://gchat.qpic.cn/gchatpic_new/0/0-0-${fileName}/0`;
+}
+
+/**
  * 右键菜单监听
  */
 function addEventqContextMenu() {
@@ -478,6 +515,7 @@ function addEventqContextMenu() {
    * 图片路径 - 搜索用
    */
   let searchImageData = null;
+  let legacySearchImageUrl = "";
   /**
    * 图片，表情包路径
    */
@@ -535,6 +573,7 @@ function addEventqContextMenu() {
     if (event.button === 2) {
       imagePath = "";
       searchImageData = null;
+      legacySearchImageUrl = "";
       msgSticker = null;
       isRightClick = true;
       const messageEl = getParentElement(event.target, "message");
@@ -560,7 +599,8 @@ function addEventqContextMenu() {
         // 发送图片检测
         if (event.target.classList.contains("image-content") && elements.some((ele) => ele.picElement)) {
           imagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
-          for (let i = 0; i < event.target.parentElement.__VUE__.length; i++) {
+          legacySearchImageUrl = getLegacyPicSearchUrl(imagePath);
+          for (let i = 0; i < (event.target.parentElement.__VUE__?.length || 0); i++) {
             const el = event.target.parentElement.__VUE__[i];
             if (el?.ctx?.picData) {
               searchImageData = { picData: el.ctx.picData, chatType: msgRecord.chatType }; //getPicUrl();
@@ -576,12 +616,13 @@ function addEventqContextMenu() {
     } else {
       imagePath = "";
       searchImageData = null;
+      legacySearchImageUrl = "";
       msgSticker = null;
     }
   });
   // 菜单监听
   new MutationObserver(() => {
-    const qContextMenus = document.querySelectorAll(".q-context-menu:not(.lite-tools-context-menu):not(.lite-toos-context-menu)");
+    const qContextMenus = document.querySelectorAll(".q-context-menu");
     if (!qContextMenus.length) {
       if (!document.querySelector(".q-context-menu")) {
         // 清理所有定时器
@@ -600,7 +641,7 @@ function addEventqContextMenu() {
         }
         return;
       }
-      qContextMenu.classList.add("lite-tools-context-menu", "lite-toos-context-menu");
+      qContextMenu.classList.add("lite-tools-context-menu");
 
       if (options.qContextMenu.HighlightReplies) {
         const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text, span.q-menu-item__text");
@@ -645,10 +686,13 @@ function addEventqContextMenu() {
         });
       }
       // 搜索图片
-      if (searchImageData && options.qContextMenu.imageSearch.enabled) {
+      if ((searchImageData || legacySearchImageUrl) && options.qContextMenu.imageSearch.enabled) {
         const _searchImageData = searchImageData;
+        const _legacySearchImageUrl = legacySearchImageUrl;
         addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
-          const searchImageUrl = encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType));
+          const searchImageUrl = _searchImageData
+            ? encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType))
+            : encodeURIComponent(_legacySearchImageUrl);
           const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
           lite_tools.openWeb(openUrl);
         });
