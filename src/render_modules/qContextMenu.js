@@ -11,6 +11,7 @@ const log = new Logs("右键菜单");
 
 // 全局定时器存储
 const subMenuTimers = new Map();
+let contextMenuInitialized = false;
 
 /**
  * 找出所有路径的公共前缀
@@ -566,6 +567,11 @@ function getCurrentChatType() {
  * 右键菜单监听
  */
 function addEventqContextMenu() {
+  if (contextMenuInitialized) {
+    return;
+  }
+  contextMenuInitialized = true;
+
   /**
    * 划词搜索
    */
