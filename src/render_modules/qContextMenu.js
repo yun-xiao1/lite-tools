@@ -504,6 +504,65 @@ function getLegacyPicSearchUrl(imagePath) {
 }
 
 /**
+ * 从右键目标附近提取图片地址，用于聊天记录等拿不到 msgRecord 的窗口。
+ * @param {Element} target
+ * @returns {String}
+ */
+function getImagePathFromTarget(target) {
+  if (!target) {
+    return "";
+  }
+
+  const imageEl =
+    target.closest?.("img") ||
+    target.querySelector?.("img") ||
+    target.closest?.(".image-content,[style*='appimg://'],[style*='appimg:'],[src^='appimg://'],[src^='appimg:']");
+
+  const src = imageEl?.currentSrc || imageEl?.src || imageEl?.getAttribute?.("src") || "";
+  if (src) {
+    return decodeURI(src.replace(/^appimg:\/\//, ""));
+  }
+
+  const inlineStyle = imageEl?.getAttribute?.("style") || target.getAttribute?.("style") || "";
+  const appimgMatch = inlineStyle.match(/appimg:\/\/[^"')\s]+/);
+  if (appimgMatch?.[0]) {
+    return decodeURI(appimgMatch[0].replace(/^appimg:\/\//, ""));
+  }
+
+  return "";
+}
+
+/**
+ * 尝试从 Vue 实例链里找 picData，兼容普通聊天和聊天记录里的图片组件。
+ * @param {Element} target
+ * @returns {Object|null}
+ */
+function getPicDataFromTarget(target) {
+  let current = target;
+  while (current && current !== document.body) {
+    const vueList = current.__VUE__;
+    if (vueList?.length) {
+      for (let i = 0; i < vueList.length; i++) {
+        const picData = vueList[i]?.ctx?.picData || vueList[i]?.props?.picData;
+        if (picData) {
+          return picData;
+        }
+      }
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
+/**
+ * 获取当前会话类型，聊天记录窗口中 msgRecord 可能缺少 chatType 时用于兜底。
+ * @returns {Number|undefined}
+ */
+function getCurrentChatType() {
+  return app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType;
+}
+
+/**
  * 右键菜单监听
  */
 function addEventqContextMenu() {
@@ -576,13 +635,21 @@ function addEventqContextMenu() {
       legacySearchImageUrl = "";
       msgSticker = null;
       isRightClick = true;
+      selectText = window.getSelection().toString() || selectText;
+
+      const targetPicData = getPicDataFromTarget(event.target);
+      const targetImagePath = getImagePathFromTarget(event.target);
+      if (targetImagePath) {
+        legacySearchImageUrl = getLegacyPicSearchUrl(targetImagePath);
+      }
+
       const messageEl = getParentElement(event.target, "message");
       if (messageEl) {
         const msgRecord = messageEl?.__VUE__?.[0]?.props?.msgRecord;
-        const elements = msgRecord?.elements;
+        const elements = msgRecord?.elements || [];
         // 生成表情逻辑
         if (elements.length === 1 && elements[0].textElement && options.qContextMenu.messageToImage.enabled) {
-          if ([1, 2, 100].includes(app?.__vue_app__?.config?.globalProperties?.$store?.state?.common_Aio?.curAioData?.chatType)) {
+          if ([1, 2, 100].includes(getCurrentChatType())) {
             const content = elements[0].textElement.content;
             const userName = msgRecord?.sendMemberName || msgRecord?.sendNickName;
             const userUid = msgRecord?.senderUid;
@@ -598,7 +665,7 @@ function addEventqContextMenu() {
         }
         // 发送图片检测
         if (event.target.classList.contains("image-content") && elements.some((ele) => ele.picElement)) {
-          imagePath = decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
+          imagePath = targetImagePath || decodeURI(event.target.src.replace(/^appimg:\/\//, ""));
           legacySearchImageUrl = getLegacyPicSearchUrl(imagePath);
           for (let i = 0; i < (event.target.parentElement.__VUE__?.length || 0); i++) {
             const el = event.target.parentElement.__VUE__[i];
@@ -607,6 +674,9 @@ function addEventqContextMenu() {
             }
           }
           log(searchImageData);
+        }
+        if (!searchImageData && targetPicData) {
+          searchImageData = { picData: targetPicData, chatType: msgRecord?.chatType ?? getCurrentChatType() };
         }
         // 发送表情包检测
         if (elements.some((ele) => ele.marketFaceElement)) {
