@@ -27,6 +27,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 > [!Warning]\
 > ~~**请注意** 该插件目前无法在高版本中使用，根据此 [Issue](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues/379#issuecomment-2708869340) 中的描述，还能正常使用的版本为 ```29804```~~ \ 
 > ~~该插件进入缓慢维护状态，无法保证所有功能在最新版 QQNT 下的可用性，以及 Bug 的修复时间将被大幅延长。~~
+> 当前分支主要用于旧版 QQNT 环境，测试环境为 **QQ 9.9.20-37051 + LiteLoaderQQNT 1.2.4**。如果使用其他 QQ 或 LiteLoaderQQNT 版本，右键菜单等功能可能表现不同。
 
 > [!TIP]\
 > macOS 用户如果需要使用本地表情功能，请将表情文件夹选择在沙盒里，否则每次重启 QQ 都需要重新选择一次表情目录
