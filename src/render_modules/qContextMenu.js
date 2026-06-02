@@ -375,25 +375,14 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     allowMainClick = true; // 如果第三个参数为 true，则允许主菜单点击
   }
 
-  if (
-    !document.querySelector(`.q-context-menu>:not(.menu-stickers-wrapper,[disabled="true"])`) &&
-    !document.querySelector(`.q-context-menu-item:not([disabled="true"])`)
-  ) {
-    return;
-  }
   /**
    * @type {Element}
    */
-  const contextItem =
-    document.querySelector(`.q-context-menu>:not(.menu-stickers-wrapper,[disabled="true"])`)?.cloneNode(true) ??
-    document.querySelector(`.q-context-menu-item:not([disabled="true"])`)?.cloneNode(true);
-  if (!contextItem) {
-    log("克隆右键菜单选项失败");
-    return;
-  }
+  const contextItem = createContextMenuItem(qContextMenu, icon, title);
   log("创建右键菜单项");
   contextItem?.style?.removeProperty("color");
-  if (subMenu && subMenu.length && contextItem.querySelector(".q-context-menu-item__text")) {
+  const textElement = getContextMenuTextElement(contextItem);
+  if (subMenu && subMenu.length && textElement) {
     contextItem.insertAdjacentHTML("beforeend", subMenuIconEl);
 
     // 使用新的嵌套菜单创建函数
@@ -403,10 +392,10 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
   if (contextItem.querySelector(".q-icon")) {
     contextItem.querySelector(".q-icon").innerHTML = icon;
   }
-  if (contextItem.classList.contains("q-context-menu-item__text")) {
-    contextItem.innerText = title;
+  if (contextItem.classList.contains("q-context-menu-item__text") || contextItem.classList.contains("q-menu-item__text")) {
+    contextItem.textContent = title;
   } else {
-    contextItem.querySelector(".q-context-menu-item__text").innerText = title;
+    textElement.textContent = title;
   }
 
   // 修改点击事件逻辑 - 如果允许主菜单点击或没有子菜单，则添加点击事件
@@ -419,6 +408,62 @@ function addQContextMenu(qContextMenu, icon, title, ...args) {
     });
   }
   qContextMenu.appendChild(contextItem);
+}
+
+/**
+ * 获取 QQ 右键菜单项里的文字节点，兼容不同 QQNT 版本的类名。
+ * @param {Element} contextItem
+ * @returns {Element}
+ */
+function getContextMenuTextElement(contextItem) {
+  return (
+    contextItem.querySelector(".q-context-menu-item__text") ||
+    contextItem.querySelector(".q-menu-item__text") ||
+    contextItem.querySelector(".content") ||
+    contextItem.querySelector("span") ||
+    contextItem
+  );
+}
+
+/**
+ * 创建右键菜单项。优先克隆 QQ 自带菜单项，找不到时手工创建一个兜底项。
+ * @param {Element} qContextMenu
+ * @param {String} icon
+ * @param {String} title
+ * @returns {Element}
+ */
+function createContextMenuItem(qContextMenu, icon, title) {
+  const contextItem =
+    qContextMenu.querySelector(`.q-context-menu-item:not([disabled="true"],.lite-tools-context-menu-item)`)?.cloneNode(true) ??
+    qContextMenu.querySelector(`.q-menu-item:not([disabled="true"],.lite-tools-context-menu-item)`)?.cloneNode(true) ??
+    qContextMenu.querySelector(`:scope > :not(.menu-stickers-wrapper,[disabled="true"],.lite-tools-context-menu-item)`)?.cloneNode(true);
+
+  if (contextItem) {
+    contextItem.classList.add("lite-tools-context-menu-item");
+    return contextItem;
+  }
+
+  log("克隆右键菜单选项失败，使用兜底菜单项");
+  const fallbackItem = document.createElement("div");
+  fallbackItem.className = "q-context-menu-item lite-tools-context-menu-item";
+  fallbackItem.style.display = "flex";
+  fallbackItem.style.alignItems = "center";
+  fallbackItem.style.gap = "8px";
+  fallbackItem.style.minWidth = "120px";
+  fallbackItem.style.padding = "8px 12px";
+  fallbackItem.style.cursor = "pointer";
+
+  const iconEl = document.createElement("span");
+  iconEl.className = "q-icon";
+  iconEl.innerHTML = icon;
+  fallbackItem.appendChild(iconEl);
+
+  const textEl = document.createElement("span");
+  textEl.className = "q-context-menu-item__text";
+  textEl.textContent = title;
+  fallbackItem.appendChild(textEl);
+
+  return fallbackItem;
 }
 
 /**
@@ -536,8 +581,8 @@ function addEventqContextMenu() {
   });
   // 菜单监听
   new MutationObserver(() => {
-    const qContextMenu = document.querySelector(".q-context-menu:not(.lite-toos-context-menu)");
-    if (!qContextMenu) {
+    const qContextMenus = document.querySelectorAll(".q-context-menu:not(.lite-tools-context-menu):not(.lite-toos-context-menu)");
+    if (!qContextMenus.length) {
       if (!document.querySelector(".q-context-menu")) {
         // 清理所有定时器
         subMenuTimers.clear();
@@ -545,65 +590,75 @@ function addEventqContextMenu() {
       }
       return;
     }
-    qContextMenu.classList.add("lite-toos-context-menu");
 
-    if (options.qContextMenu.HighlightReplies) {
-      const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text");
-      targetElements?.forEach((element) => {
-        switch (element?.textContent) {
-          case "复制":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-copy-color)");
-            break;
-          case "转发":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-forward-color)");
-            break;
-          case "收藏":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-collect-color)");
-            break;
-          case "多选":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-multiple-color)");
-            break;
-          case "引用":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
-            break;
-          case "回复":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
-            break;
-          case "设为精华":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-essence-color)");
-            break;
-          case "撤回":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-revoke-color)");
-            break;
-          case "删除":
-            element.parentNode.style.setProperty("color", "var(--lt-q-context-delete-color)");
-            break;
+    qContextMenus.forEach((qContextMenu) => {
+      if (!qContextMenu) {
+        if (!document.querySelector(".q-context-menu")) {
+          // 清理所有定时器
+          subMenuTimers.clear();
+          document.querySelectorAll(".lite-tools-sub-context-menu").forEach((el) => el.remove());
         }
-      });
-    }
+        return;
+      }
+      qContextMenu.classList.add("lite-tools-context-menu", "lite-toos-context-menu");
 
-    // 在网页搜索
-    if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled) {
-      const searchText = selectText;
-      addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
-        lite_tools.openWeb(options.qContextMenu.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
-      });
-    }
-    // 搜索图片
-    if (searchImageData && options.qContextMenu.imageSearch.enabled) {
-      const _searchImageData = searchImageData;
-      addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
-        const searchImageUrl = encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType));
-        const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
-        lite_tools.openWeb(openUrl);
-      });
-    }
-    // 保存到本地表情文件夹 - 改造后支持多级嵌套
-    log("图片地址", imagePath);
-    if (imagePath && options.localEmoticons.enabled && options.localEmoticons.copyFileTolocalEmoticons) {
-      const _imagePath = imagePath;
-      const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
-      addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, async (event, data) => {
+      if (options.qContextMenu.HighlightReplies) {
+        const targetElements = qContextMenu.querySelectorAll("span.q-context-menu-item__text, span.q-menu-item__text");
+        targetElements?.forEach((element) => {
+          switch (element?.textContent) {
+            case "复制":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-copy-color)");
+              break;
+            case "转发":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-forward-color)");
+              break;
+            case "收藏":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-collect-color)");
+              break;
+            case "多选":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-multiple-color)");
+              break;
+            case "引用":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
+              break;
+            case "回复":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-quote-color)");
+              break;
+            case "设为精华":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-essence-color)");
+              break;
+            case "撤回":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-revoke-color)");
+              break;
+            case "删除":
+              element.parentNode.style.setProperty("color", "var(--lt-q-context-delete-color)");
+              break;
+          }
+        });
+      }
+
+      // 在网页搜索
+      if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled) {
+        const searchText = selectText;
+        addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
+          lite_tools.openWeb(options.qContextMenu.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
+        });
+      }
+      // 搜索图片
+      if (searchImageData && options.qContextMenu.imageSearch.enabled) {
+        const _searchImageData = searchImageData;
+        addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
+          const searchImageUrl = encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType));
+          const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
+          lite_tools.openWeb(openUrl);
+        });
+      }
+      // 保存到本地表情文件夹 - 改造后支持多级嵌套
+      log("图片地址", imagePath);
+      if (imagePath && options.localEmoticons.enabled && options.localEmoticons.copyFileTolocalEmoticons) {
+        const _imagePath = imagePath;
+        const subMenuList = emoticonsList.map(({ name, path }) => ({ name, path }));
+        addQContextMenu(qContextMenu, localEmoticonsIcon, "保存到本地表情", subMenuList, async (event, data) => {
           const filePathArr = _imagePath.replace(/\\/g, "/").split("/");
           const filePath = `${data.path}\\${filePathArr[filePathArr.length - 1]}`.replace(/\\/g, "/");
           if (_imagePath.startsWith("qqface:")) {
@@ -621,17 +676,18 @@ function addEventqContextMenu() {
             showToast("保存失败", "error", 3000);
           }
         },
-        true,// 修改：添加第三个参数 true，表示允许主菜单点击
-      );
-    }
-    // 消息转图片
-    if (options.qContextMenu.messageToImage.enabled && msgSticker) {
-      const _msgSticker = msgSticker;
-      addQContextMenu(qContextMenu, imageIcon, "转图片", () => {
-        createSticker(_msgSticker);
-      });
-    }
-  }).observe(document.body, { childList: true });
+          true,// 修改：添加第三个参数 true，表示允许主菜单点击
+        );
+      }
+      // 消息转图片
+      if (options.qContextMenu.messageToImage.enabled && msgSticker) {
+        const _msgSticker = msgSticker;
+        addQContextMenu(qContextMenu, imageIcon, "转图片", () => {
+          createSticker(_msgSticker);
+        });
+      }
+    });
+  }).observe(document.body, { childList: true, subtree: true });
 }
 
 /**
