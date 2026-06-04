@@ -45,44 +45,6 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 - 打开设置页面，选择 `轻量工具箱`
 - 滚动到插件页面底部，点击新版本号，在更新日志窗口点击 `更新` 即可
 
-## 图片搜索说明
-
-图片搜索依赖 QQ 图片的临时直链。QQNT 的图片链接通常需要携带 `rkey`，且 `rkey` 和图片 CDN 链接都有时效；过期后，Google Lens、SauceNAO 等搜索网站可能会提示“该网址中没有图片。请使用其他网址或图片重试”。
-
-如果需要提高图片搜索稳定性，请在插件设置中配置：
-
-- `自定义rkey获取地址`
-- `自定义rkey Token`，如果你的 rkey 服务需要鉴权
-
-rkey 接口需要返回以下任一格式：
-
-```json
-{
-  "private_rkey": "&rkey=xxx",
-  "group_rkey": "&rkey=xxx",
-  "expired_time": 1780000000
-}
-```
-
-或：
-
-```json
-{
-  "data": {
-    "private_rkey": "&rkey=xxx",
-    "group_rkey": "&rkey=xxx",
-    "expired_time": 1780000000
-  }
-}
-```
-
-说明：
-
-- `private_rkey` 用于私聊图片。
-- `group_rkey` 用于群聊图片。
-- `expired_time` 为秒级时间戳；过期后插件会重新请求 rkey 接口。
-- 聊天记录窗口中的图片搜索属于实验支持，能否搜索成功取决于 QQNT 是否能提供有效图片数据，以及搜索网站能否访问该图片直链。
-
 ### 手动构建
 
 ```
