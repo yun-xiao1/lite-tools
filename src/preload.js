@@ -107,7 +107,6 @@ contextBridge.exposeInMainWorld("lite_tools", {
   showOpenDialog: (data) => ipcRenderer.invoke("LiteLoader.lite_tools.showOpenDialog", data),
   // 获取图片rkey
   getRkey: (chatType) => ipcRenderer.invoke("LiteLoader.lite_tools.getRkey", chatType),
-  checkImageUrl: (url) => ipcRenderer.invoke("LiteLoader.lite_tools.checkImageUrl", url),
   // 删除账号独立配置
   deleteUserConfig: (uid) => ipcRenderer.send("LiteLoader.lite_tools.deleteUserConfig", uid),
   // 添加账号独立配置

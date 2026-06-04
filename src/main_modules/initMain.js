@@ -4,7 +4,6 @@ import { config, updateConfig } from "./config.js";
 import { copyFile, writeFileSync, existsSync } from "fs";
 import { randomUUID } from "crypto";
 import { getRkey } from "./getRkey.js";
-import { fetch } from "./updateProxy.js";
 import { Logs } from "./logs.js";
 const log = new Logs("initMain");
 import { EventEmitter } from "events";
@@ -194,30 +193,8 @@ ipcMain.handle("LiteLoader.lite_tools.showOpenDialog", async (_, data) => {
 
 // 获取rkey
 ipcMain.handle("LiteLoader.lite_tools.getRkey", async (_, chatType) => {
-  const chatTypeStr = chatType === 2 || chatType === "2" || chatType === "group_rkey" ? "group_rkey" : "private_rkey";
+  const chatTypeStr = chatType === 2 ? "group_rkey" : "private_rkey";
   return await getRkey(chatTypeStr);
-});
-
-ipcMain.handle("LiteLoader.lite_tools.checkImageUrl", async (_, url) => {
-  try {
-    const urlData = new URL(url);
-    if (!["http:", "https:"].includes(urlData.protocol)) {
-      return false;
-    }
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Range: "bytes=0-0",
-        "User-Agent": config.global.UA,
-      },
-    });
-    const contentType = response.headers.get("content-type") || "";
-    return response.status >= 200 && response.status < 400 && contentType.toLowerCase().startsWith("image/");
-  } catch (err) {
-    log("图片链接检测失败", url, err?.message);
-    return false;
-  }
 });
 
 export { initMain, sendIpc };

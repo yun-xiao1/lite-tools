@@ -555,10 +555,6 @@ function getPicDataFromTarget(target) {
   return null;
 }
 
-function getPicDataFromRecord(elements) {
-  return elements?.find((element) => element?.picElement)?.picElement || null;
-}
-
 /**
  * 获取当前会话类型，聊天记录窗口中 msgRecord 可能缺少 chatType 时用于兜底。
  * @returns {Number|undefined}
@@ -688,12 +684,6 @@ function addEventqContextMenu() {
         if (!searchImageData && targetPicData) {
           searchImageData = { picData: targetPicData, chatType: msgRecord?.chatType ?? getCurrentChatType() };
         }
-        if (!searchImageData) {
-          const recordPicData = getPicDataFromRecord(elements);
-          if (recordPicData) {
-            searchImageData = { picData: recordPicData, chatType: msgRecord?.chatType ?? getCurrentChatType() };
-          }
-        }
         // 发送表情包检测
         if (elements.some((ele) => ele.marketFaceElement)) {
           imagePath = "qqface:" + elements.find((ele) => ele.marketFaceElement)?.marketFaceElement?.dynamicFacePath;
@@ -776,16 +766,9 @@ function addEventqContextMenu() {
         const _searchImageData = searchImageData;
         const _legacySearchImageUrl = legacySearchImageUrl;
         addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
-          const rawSearchImageUrl = _searchImageData ? await getPicUrl(_searchImageData.picData, _searchImageData.chatType) : _legacySearchImageUrl;
-          if (!rawSearchImageUrl || !/^https?:\/\//i.test(rawSearchImageUrl)) {
-            showToast("没有拿到可搜索的图片直链", "error", 4000);
-            return;
-          }
-          if (!(await lite_tools.checkImageUrl(rawSearchImageUrl))) {
-            showToast("图片链接已失效或无法被搜索网站访问", "error", 5000);
-            return;
-          }
-          const searchImageUrl = encodeURIComponent(rawSearchImageUrl);
+          const searchImageUrl = _searchImageData
+            ? encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType))
+            : encodeURIComponent(_legacySearchImageUrl);
           const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
           lite_tools.openWeb(openUrl);
         });
