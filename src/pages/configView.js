@@ -57,7 +57,7 @@ const IMAGE_SEARCH_PRESETS = [
   {
     key: "google_legacy",
     name: "Google旧版(推荐)",
-    url: "https://www.google.com/searchbyimage?image_url=%search%",
+    url: "https://www.google.com/searchbyimage?client=app&image_url=%search%",
   },
   {
     key: "google_lens",
@@ -67,7 +67,7 @@ const IMAGE_SEARCH_PRESETS = [
   {
     key: "yandex_ru",
     name: "Yandex.ru(设置关过滤)",
-    url: "https://yandex.ru/images/search?rpt=imageview&url=%search%",
+    url: "https://yandex.ru/images/search?url=%search%",
   },
   {
     key: "yandex_com",
@@ -78,31 +78,6 @@ const IMAGE_SEARCH_PRESETS = [
     key: "saucenao",
     name: "SauceNAO",
     url: "https://saucenao.com/search.php?url=%search%",
-  },
-  {
-    key: "ascii2d",
-    name: "ascii2d",
-    url: "https://ascii2d.net/search/url/%search%",
-  },
-  {
-    key: "trace_moe",
-    name: "WAIT(动画)",
-    url: "https://trace.moe/?url=%search%",
-  },
-  {
-    key: "iqdb",
-    name: "IQDB",
-    url: "https://iqdb.org/?url=%search%",
-  },
-  {
-    key: "iqdb_3d",
-    name: "3D-IQDB",
-    url: "https://3d.iqdb.org/?url=%search%",
-  },
-  {
-    key: "tineye",
-    name: "TinEye",
-    url: "https://tineye.com/search?url=%search%",
   },
   {
     key: "bing",

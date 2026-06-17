@@ -755,14 +755,14 @@ function addEventqContextMenu() {
       }
 
       // 在网页搜索
-      if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled) {
+      if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled && options.qContextMenu.wordSearch.searchUrl?.trim()) {
         const searchText = selectText;
         addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
           lite_tools.openWeb(options.qContextMenu.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
         });
       }
       // 搜索图片
-      if ((searchImageData || legacySearchImageUrl) && options.qContextMenu.imageSearch.enabled) {
+      if ((searchImageData || legacySearchImageUrl) && options.qContextMenu.imageSearch.enabled && options.qContextMenu.imageSearch.searchUrl?.trim()) {
         const _searchImageData = searchImageData;
         const _legacySearchImageUrl = legacySearchImageUrl;
         addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
