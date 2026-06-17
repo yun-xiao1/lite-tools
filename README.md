@@ -2,100 +2,131 @@
   <img width="160" alt="icon" height="160" src="./icon.png" />
 </p>
 
-<h1 align="center">轻量工具箱</h1>
+<h1 align="center">轻量工具箱 Lite Tools</h1>
 
 <p align="center">
-  <a href="/LICENSE"><img src="https://img.shields.io/github/license/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="LICENSE"></a>
-  <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases"><img src="https://img.shields.io/github/v/release/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Release"></a>
-  <a href="https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues"><img src="https://img.shields.io/github/issues/xiyuesaves/LiteLoaderQQNT-lite_tools" alt="Issues"></a>
+  <a href="/LICENSE"><img src="https://img.shields.io/github/license/yun-xiao1/lite-tools" alt="LICENSE"></a>
+  <a href="https://github.com/yun-xiao1/lite-tools"><img src="https://img.shields.io/badge/fork-yun--xiao1%2Flite--tools-blue" alt="Fork"></a>
 </p>
 
-LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
+LiteLoaderQQNT 插件，基于原项目 `xiyuesaves/LiteLoaderQQNT-lite_tools` 维护。
 
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
-> [!CAUTION]\
-> **不要在国内平台宣传该插件**\
-> **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
+> [!CAUTION]
+> 不要在国内平台宣传该插件。不要在 QQ 官方群聊发送任何可以看出你使用了第三方插件的截图。
 
-> [!NOTE]\
-> 插件正在重构中 \
-> 您可以尝试自行构建 [dev/v5](https://github.com/xiyuesaves/lite-tools/tree/dev/v5) 分支 \
-> 或者加入 [qwqnt](https://t.me/QwQ_NT) 群组以获取构建好的 alpha 版本插件 \
-> 该插件在 Windows 环境下测试开发，理论全平台兼容，但没有条件对 Mac 和 Linux 平台进行测试
+## Fork 说明与许可证
 
-> [!Warning]\
-> ~~**请注意** 该插件目前无法在高版本中使用，根据此 [Issue](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/issues/379#issuecomment-2708869340) 中的描述，还能正常使用的版本为 ```29804```~~ \ 
-> ~~该插件进入缓慢维护状态，无法保证所有功能在最新版 QQNT 下的可用性，以及 Bug 的修复时间将被大幅延长。~~
-> 当前分支主要用于旧版 QQNT 环境，测试环境为 **QQ 9.9.20-37051 + LiteLoaderQQNT 1.2.4**。如果使用其他 QQ 或 LiteLoaderQQNT 版本，右键菜单等功能可能表现不同。
+这是 `yun-xiao1/lite-tools` 的维护 fork，基于原项目 `xiyuesaves/LiteLoaderQQNT-lite_tools` 修改。
 
-> [!TIP]\
-> macOS 用户如果需要使用本地表情功能，请将表情文件夹选择在沙盒里，否则每次重启 QQ 都需要重新选择一次表情目录
+本 fork 遵守原项目的 GPL-3.0 许可证，并在源码与发布包中保留原作者版权声明和完整许可协议：
 
-## 使用方法
+- 原作者：`xiyuesaves`
+- 原项目：`xiyuesaves/LiteLoaderQQNT-lite_tools`
+- 许可证：`GPL-3.0`
+- 许可协议全文：见仓库中的 `LICENSE` 文件
 
-### 从 Releases 中下载稳定版的方式进行安装
+## 当前维护环境
 
-- 下载 [最新发布版本](https://github.com/xiyuesaves/LiteLoaderQQNT-lite_tools/releases/latest) 中的 `lite_tools_v4.zip`
-- 将压缩包中的内容解压到 [LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT) 数据目录的 `plugins/lite_tools` （需要手动创建 `lite_tools` 文件夹）路径下
-- 重启 QQNT 安装完成
+当前分支主要按以下环境处理和测试：
 
-### 插件内自动更新
+- QQNT：`9.9.20-37051` x64
+- LiteLoaderQQNT：`1.2.4`
+- 插件版本：`2.33.14`
+- 系统：Windows
 
-- 打开设置页面，选择 `轻量工具箱`
-- 滚动到插件页面底部，点击新版本号，在更新日志窗口点击 `更新` 即可
+其他 QQ 或 LiteLoaderQQNT 版本可能会出现右键菜单、图片搜索、聊天记录页面等功能表现不一致的问题。
 
-### 手动构建
+## 当前改动
 
+- 实验支持在聊天记录窗口使用 `右键菜单 > 划词搜索`。
+- 实验支持在聊天记录窗口使用 `右键菜单 > 图片搜索`。
+- 右键菜单监听改为在渲染进程通用入口初始化，避免聊天记录页面未加载聊天页模块时右键菜单不生效。
+- 图片搜索在聊天记录里拿不到普通聊天消息数据时，会尝试从右键目标附近提取 `appimg://` 图片地址，并回退到旧版图片链接解析。
+- 修复旧版图片搜索路径解析：
+  - 兼容 Windows 反斜杠路径。
+  - 只移除文件名末尾的 `_0`，避免误改图片 hash。
+- `manifest.json` 的仓库信息已改为 `yun-xiao1/lite-tools`，避免插件更新入口指回原仓库。
+- 不做图片链接有效性预校验，避免右键搜索时卡住十几秒才打开浏览器。
+
+## 下载与安装
+
+当前测试包：
+
+[lite_tools_v4-record-search-rollback.zip](https://raw.githubusercontent.com/yun-xiao1/lite-tools/feature/context-menu-record-search/packages/lite_tools_v4-record-search-rollback.zip)
+
+安装方法：
+
+1. 下载上面的 zip。
+2. 打开 LiteLoaderQQNT 插件管理页面。
+3. 导入插件压缩包，或将压缩包内容解压到 LiteLoaderQQNT 数据目录的 `plugins/lite_tools`。
+4. 重启 QQNT。
+
+如果你已经安装过轻量工具箱，建议先备份原 `lite_tools` 插件目录，再覆盖测试包。
+
+## 图片搜索说明
+
+图片搜索依赖 QQ 图片临时直链。QQNT 的图片链接可能需要 `rkey`，并且图片 CDN 链接本身也可能有时效。
+
+如果搜索网站提示：
+
+```text
+该网址中没有图片。请使用其他网址或图片重试
 ```
-git clone git@github.com:xiyuesaves/LiteLoaderQQNT-lite_tools.git
-cd ./LiteLoaderQQNT-lite_tools
-pnpm i
-pnpm run build
+
+通常说明：
+
+- 图片 CDN 链接已过期。
+- `rkey` 已过期或群聊/私聊 rkey 类型不匹配。
+- 搜索网站无法访问 QQ 图片直链。
+- 聊天记录窗口没有提供完整图片数据，只能走旧版 `appimg://` 路径兜底。
+
+需要提高图片搜索稳定性时，可以在插件设置中配置：
+
+- `自定义rkey获取地址`
+- `自定义rkey Token`，如果你的 rkey 服务需要鉴权
+
+rkey 接口可返回以下任一格式：
+
+```json
+{
+  "private_rkey": "&rkey=xxx",
+  "group_rkey": "&rkey=xxx",
+  "expired_time": 1780000000
+}
 ```
 
-### 查看当前版本更新日志
+或：
 
-- 打开设置页面，选择 `轻量工具箱`
-- 滚动到插件页面底部，点击当前版本号即可
+```json
+{
+  "data": {
+    "private_rkey": "&rkey=xxx",
+    "group_rkey": "&rkey=xxx",
+    "expired_time": 1780000000
+  }
+}
+```
 
-## 功能列表
+## 已知限制
 
-| 功能列表               |                    |                          |                  |
-| ---------------------- | ------------------ | ------------------------ | ---------------- |
-| 本地表情               | 阻止撤回           | 查看撤回消息             | 图片搜索         |
-| 自定义背景             | 头像浮动           | 消息显示发送时间         | 消息后缀         |
-| 小程序卡片转链接       | 精简输入框功能     | 精简侧边栏功能           | 精简聊天框功能   |
-| 快速关闭预览图片       | 移除回复@          | 消息合并                 | 禁用 GIF 热图    |
-| 划词搜索               | 隐藏小红点         | 禁用表情推荐             | 阻止拖拽多选消息 |
-| 消息靠左显示           | 消息转图片         | 消息列表只显示头像       | 自定义字体       |
-| 移除 VIP 彩色昵称      | 图片自适应窗口宽度 | 未读气泡显示真实消息数量 | 图片窗口全局拖拽 |
-| [右键菜单选项高亮](https://github.com/yige-yigeren/LiteLoaderQQNT-HighlightReplies) | 记录离开时的位置   | 侧键返回                 | 关键词提醒       |
-| 阻止 ESC 关闭窗口      | 链接预览           | 图片遮罩                 | 移除头衔         |
-| 取消主窗口最小尺寸限制 | 同步系统主题色 |                          |                  |
+- 聊天记录窗口的图片搜索属于实验支持，不保证每张图都能搜。
+- 如果 QQ 只提供本地缓存路径，而不是可访问的图片直链，Google Lens / SauceNAO 仍可能报错。
+- 本 fork 目前优先保证旧版 QQNT 环境可用，不保证最新 QQNT 兼容。
+
+## 手动构建
+
+```bash
+git clone https://github.com/yun-xiao1/lite-tools.git
+cd lite-tools
+npm install
+npm run build
+```
 
 ## 声明
 
-### 一切开发旨在学习，请勿用于非法和商业用途
-
-- 轻量工具箱 是完全免费且开放源代码的软件，仅供学习和娱乐用途使用。
-- 轻量工具箱 不会通过任何方式强制收取费用，或对使用者提出物质条件。
-- 轻量工具箱 由整个开源社区维护，并不是属于某个个体的作品，所有贡献者都享有其作品的著作权。
-- 轻量工具箱 禁止用于任何非法用途，插件开发属学习与研究目的，仅自用，未提供给任何第三方使用。任何不当使用导致的任何侵权问题责任自负。
-
-## Star History
-
-<picture>
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="https://starchart.cc/xiyuesaves/LiteLoaderQQNT-lite_tools.svg?background=%23ffffff00&axis=%23e6edf3&line=%2321acec"
-  />
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="https://starchart.cc/xiyuesaves/LiteLoaderQQNT-lite_tools.svg?background=%23ffffff00&axis=%231a1a1a&line=%2321acec"
-  />
-  <img
-    alt="Star History Chart"
-    src="https://starchart.cc/xiyuesaves/LiteLoaderQQNT-lite_tools.svg?background=%23ffffff00&axis=%231a1a1a&line=%2321acec"
-  />
-</picture>
+- 本项目仅供学习和研究。
+- 请勿用于非法用途。
+- 本 fork 不代表原作者立场。
+- 使用第三方插件可能带来账号或客户端风险，请自行判断并承担后果。
