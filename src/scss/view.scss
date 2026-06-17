@@ -83,11 +83,19 @@
           pointer-events: none;
           opacity: 0.6;
         }
+        &.selected {
+          color: var(--text_link);
+          background-color: var(--overlay_active);
+        }
         &:hover {
           background-color: var(--hover-background);
         }
       }
     }
+  }
+
+  .search-preset-select {
+    width: 180px;
   }
   .test-proxy {
     pointer-events: none !important;

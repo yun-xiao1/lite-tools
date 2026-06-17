@@ -25,6 +25,97 @@ import { Logs } from "../render_modules/logs.js";
 import { showToast, clearToast } from "../render_modules/toast.js";
 const log = new Logs("配置界面");
 
+const WORD_SEARCH_PRESETS = [
+  {
+    key: "bing",
+    name: "Bing",
+    url: "https://www.bing.com/search?q=%search%",
+  },
+  {
+    key: "google",
+    name: "Google",
+    url: "https://www.google.com/search?q=%search%",
+  },
+  {
+    key: "baidu",
+    name: "百度",
+    url: "https://www.baidu.com/s?wd=%search%",
+  },
+  {
+    key: "duckduckgo",
+    name: "DuckDuckGo",
+    url: "https://duckduckgo.com/?q=%search%",
+  },
+  {
+    key: "custom",
+    name: "自定义",
+    url: "",
+  },
+];
+
+const IMAGE_SEARCH_PRESETS = [
+  {
+    key: "google_legacy",
+    name: "Google旧版(推荐)",
+    url: "https://www.google.com/searchbyimage?image_url=%search%",
+  },
+  {
+    key: "google_lens",
+    name: "GoogleLens(选完全相符)",
+    url: "https://lens.google.com/uploadbyurl?url=%search%",
+  },
+  {
+    key: "yandex_ru",
+    name: "Yandex.ru(设置关过滤)",
+    url: "https://yandex.ru/images/search?rpt=imageview&url=%search%",
+  },
+  {
+    key: "yandex_com",
+    name: "Yandex.com(锁区)",
+    url: "https://yandex.com/images/search?rpt=imageview&url=%search%",
+  },
+  {
+    key: "saucenao",
+    name: "SauceNAO",
+    url: "https://saucenao.com/search.php?url=%search%",
+  },
+  {
+    key: "ascii2d",
+    name: "ascii2d",
+    url: "https://ascii2d.net/search/url/%search%",
+  },
+  {
+    key: "trace_moe",
+    name: "WAIT(动画)",
+    url: "https://trace.moe/?url=%search%",
+  },
+  {
+    key: "iqdb",
+    name: "IQDB",
+    url: "https://iqdb.org/?url=%search%",
+  },
+  {
+    key: "iqdb_3d",
+    name: "3D-IQDB",
+    url: "https://3d.iqdb.org/?url=%search%",
+  },
+  {
+    key: "tineye",
+    name: "TinEye",
+    url: "https://tineye.com/search?url=%search%",
+  },
+  {
+    key: "bing",
+    name: "Bing",
+    url: "https://www.bing.com/images/search?view=detailv2&iss=sbi&form=SBIIRP&sbisrc=UrlPaste&q=imgurl:%search%",
+  },
+  {
+    key: "custom",
+    name: "自定义",
+    url: "",
+  },
+];
+
 /**
  * 打开设置界面时触发
  * @param {Element} view 设置页面容器
@@ -257,9 +348,17 @@ async function onConfigView(view) {
     view.querySelector(".select-search-url").classList.toggle("disabled-input", !enabled);
   });
   const searchEl = view.querySelector(".search-url");
-  searchEl.value = options.qContextMenu.wordSearch.searchUrl;
+  initSearchPresetSelect({
+    selectEl: view.querySelector('[data-search-preset="word"]'),
+    inputEl: searchEl,
+    config: options.qContextMenu.wordSearch,
+    presets: WORD_SEARCH_PRESETS,
+    defaultPreset: "custom",
+  });
   searchEl.addEventListener("input", (e) => {
     options.qContextMenu.wordSearch.searchUrl = e.target.value;
+    options.qContextMenu.wordSearch.preset = "custom";
+    setSearchPresetView(view.querySelector('[data-search-preset="word"]'), WORD_SEARCH_PRESETS, "custom");
     debounceSetOptions();
   });
 
@@ -268,11 +367,61 @@ async function onConfigView(view) {
     view.querySelector(".image-select-search-url").classList.toggle("disabled-input", !enabled);
   });
   const imgSearchEl = view.querySelector(".img-search-url");
-  imgSearchEl.value = options.qContextMenu.imageSearch.searchUrl;
+  initSearchPresetSelect({
+    selectEl: view.querySelector('[data-search-preset="image"]'),
+    inputEl: imgSearchEl,
+    config: options.qContextMenu.imageSearch,
+    presets: IMAGE_SEARCH_PRESETS,
+    defaultPreset: "custom",
+  });
   imgSearchEl.addEventListener("input", (e) => {
     options.qContextMenu.imageSearch.searchUrl = e.target.value;
+    options.qContextMenu.imageSearch.preset = "custom";
+    setSearchPresetView(view.querySelector('[data-search-preset="image"]'), IMAGE_SEARCH_PRESETS, "custom");
     debounceSetOptions();
   });
+
+  function initSearchPresetSelect({ selectEl, inputEl, config, presets, defaultPreset }) {
+    const matchedPreset = presets.find((preset) => preset.url && preset.url === config.searchUrl);
+    const initialPreset = config.preset ?? matchedPreset?.key ?? defaultPreset;
+    const preset = presets.find((item) => item.key === initialPreset) ?? presets.find((item) => item.key === defaultPreset);
+    const optionEl = selectEl.querySelector(".setting-option");
+
+    optionEl.innerHTML = "";
+    presets.forEach((item) => {
+      const itemEl = document.createElement("div");
+      itemEl.classList.add("setting-item");
+      itemEl.setAttribute("data-value", item.key);
+      itemEl.innerText = item.name;
+      optionEl.appendChild(itemEl);
+      itemEl.addEventListener("click", () => {
+        config.preset = item.key;
+        if (item.url) {
+          config.searchUrl = item.url;
+          inputEl.value = item.url;
+        }
+        setSearchPresetView(selectEl, presets, item.key);
+        lite_tools.setOptions(options);
+      });
+    });
+    selectEl.addEventListener("click", () => {
+      selectEl.querySelector(".setting-option")?.classList.toggle("show");
+    });
+
+    if (!config.preset) {
+      config.preset = preset.key;
+    }
+    inputEl.value = config.searchUrl;
+    setSearchPresetView(selectEl, presets, config.preset);
+  }
+
+  function setSearchPresetView(selectEl, presets, presetKey) {
+    const preset = presets.find((item) => item.key === presetKey) ?? presets.find((item) => item.key === "custom");
+    selectEl.querySelector(".setting-view")?.setAttribute("data-value", preset?.name ?? "自定义");
+    selectEl.querySelectorAll(".setting-item").forEach((item) => {
+      item.classList.toggle("selected", item.getAttribute("data-value") === preset?.key);
+    });
+  }
 
   // 头像黏贴消息框效果
   addSwitchEventlistener("message.avatarSticky.enabled", ".avatarSticky", (_, enabled) => {

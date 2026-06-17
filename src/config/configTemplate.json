@@ -112,11 +112,13 @@
     },
     "wordSearch": {
       "enabled": false,
-      "searchUrl": "https://www.bing.com/search?q=%search%"
+      "preset": "custom",
+      "searchUrl": ""
     },
     "imageSearch": {
       "enabled": false,
-      "searchUrl": "https://saucenao.com/search.php?url=%search%"
+      "preset": "custom",
+      "searchUrl": ""
     },
     "messageToImage": {
       "enabled": false,

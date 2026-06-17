@@ -85,9 +85,11 @@
  * @property {boolean} qContextMenu.HighlightReplies - 选项高亮。
  * @property {Object} qContextMenu.wordSearch - 划词搜索
  * @property {boolean} qContextMenu.wordSearch.enabled - 启用划词搜索。
+ * @property {string} qContextMenu.wordSearch.preset - 划词搜索预设。
  * @property {string} qContextMenu.wordSearch.searchUrl - 划词搜索的 URL 模板。
  * @property {Object} qContextMenu.imageSearch - 图片搜索配置
  * @property {boolean} qContextMenu.imageSearch.enabled - 启用图片搜索。
+ * @property {string} qContextMenu.imageSearch.preset - 图片搜索预设。
  * @property {string} qContextMenu.imageSearch.searchUrl - 图片搜索的 URL 模板。
  * @property {Object} preventMessageRecall - 防止消息撤回配置
  * @property {boolean} preventMessageRecall.enabled - 启用防止消息撤回。

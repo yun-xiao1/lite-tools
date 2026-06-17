@@ -36,7 +36,7 @@ function isVersionLogged(logText, version) {
  * @returns {string} 替换后的文本
  */
 function replaceVersionContent(logText, version, newContent) {
-  const versionPattern = `##\\s*${version}\\b[^#]*?(?=(\\n##\\s*v|\\n?$))`;
+  const versionPattern = `##\\s*${version}\\b[\\s\\S]*?(?=(\\n##\\s*v|\\n?$))`;
   const regex = new RegExp(versionPattern, "gs");
   return logText.replace(regex, newContent.trim());
 }
