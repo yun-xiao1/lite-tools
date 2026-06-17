@@ -5,6 +5,7 @@
 import "./render_modules/hookVue3.js";
 import { options, updateOptions } from "./render_modules/options.js";
 import { first } from "./render_modules/first.js";
+import { addEventqContextMenu } from "./render_modules/qContextMenu.js";
 /**
  * 根据页面哈希决定加载页面模块
  * @return {void}
@@ -16,6 +17,7 @@ async function onLoad() {
   const { Logs } = await import("./render_modules/logs.js");
   const log = new Logs("主渲染进程模块");
   log("初始化", Date.now() - time);
+  addEventqContextMenu();
   if (location.hash === "#/blank") {
     navigation.addEventListener("navigatesuccess", updateHash, { once: true });
   } else {

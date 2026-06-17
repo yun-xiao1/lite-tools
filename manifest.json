@@ -4,7 +4,7 @@
   "name": "轻量工具箱",
   "slug": "lite_tools",
   "description": "轻量 · 优雅 · 高效",
-  "version": "2.33.14",
+  "version": "2.33.15",
   "icon": "./icon.png",
   "authors": [
     {
@@ -23,10 +23,10 @@
     "preload": "./src/preload.js"
   },
   "repository": {
-    "repo": "xiyuesaves/LiteLoaderQQNT-lite_tools",
+    "repo": "yun-xiao1/lite-tools",
     "branch": "v4",
     "release": {
-      "tag": "v2.33.14",
+      "tag": "v2.33.15",
       "file": "lite_tools_v4.zip"
     }
   }

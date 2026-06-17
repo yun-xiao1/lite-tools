@@ -1,4 +1,4 @@
-<p align=center>
+<p align="center">
   <img width="160" alt="icon" height="160" src="./icon.png" />
 </p>
 
@@ -27,20 +27,23 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 - 许可证：`GPL-3.0`
 - 许可协议全文：见仓库中的 `LICENSE` 文件
 
-## 当前维护环境
+## 已知可用环境
 
-当前分支主要按以下环境处理和测试：
+当前版本主要按以下环境处理和测试：
 
-- QQNT：`9.9.20-37051` x64
-- LiteLoaderQQNT：`1.2.4`
-- 插件版本：`2.33.14`
-- 系统：Windows
+| 项目 | 版本 |
+| --- | --- |
+| QQNT | `9.9.20-37051` x64 |
+| LiteLoaderQQNT | `1.2.4` |
+| 轻量工具箱 | `2.33.15`，基于原版 `2.33.14` |
+| 系统 | Windows |
 
 其他 QQ 或 LiteLoaderQQNT 版本可能会出现右键菜单、图片搜索、聊天记录页面等功能表现不一致的问题。
 
 ## 当前改动
 
-- 实验支持在聊天记录窗口使用 `右键菜单 > 划词搜索`。
+- 合并聊天记录窗口的右键菜单兼容修复。
+- 支持在聊天记录窗口使用 `右键菜单 > 划词搜索`。
 - 实验支持在聊天记录窗口使用 `右键菜单 > 图片搜索`。
 - 右键菜单监听改为在渲染进程通用入口初始化，避免聊天记录页面未加载聊天页模块时右键菜单不生效。
 - 图片搜索在聊天记录里拿不到普通聊天消息数据时，会尝试从右键目标附近提取 `appimg://` 图片地址，并回退到旧版图片链接解析。
@@ -52,9 +55,9 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 ## 下载与安装
 
-当前测试包：
+正式包：
 
-[lite_tools_v4-record-search-rollback.zip](https://raw.githubusercontent.com/yun-xiao1/lite-tools/feature/context-menu-record-search/packages/lite_tools_v4-record-search-rollback.zip)
+[lite_tools_v4.zip](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.15/lite_tools_v4.zip)
 
 安装方法：
 
@@ -63,7 +66,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 3. 导入插件压缩包，或将压缩包内容解压到 LiteLoaderQQNT 数据目录的 `plugins/lite_tools`。
 4. 重启 QQNT。
 
-如果你已经安装过轻量工具箱，建议先备份原 `lite_tools` 插件目录，再覆盖测试包。
+如果已经安装过轻量工具箱，建议先备份原 `lite_tools` 插件目录，再覆盖新版。
 
 ## 图片搜索说明
 
