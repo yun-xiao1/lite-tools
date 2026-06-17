@@ -14,6 +14,17 @@ LiteLoaderQQNT 插件 - 轻量工具箱 —— 轻量 · 优雅 · 高效
 
 LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoaderQQNT)
 
+## Fork 说明与许可证
+
+这是 `yun-xiao1/lite-tools` 的维护 fork，基于原项目 `xiyuesaves/LiteLoaderQQNT-lite_tools` 修改。
+
+本 fork 遵守原项目的 GPL-3.0 许可证，并在源码与发布包中保留原作者版权声明和完整许可协议：
+
+- 原作者：`xiyuesaves`
+- 原项目：`xiyuesaves/LiteLoaderQQNT-lite_tools`
+- 许可证：`GPL-3.0`
+- 许可协议全文：见仓库中的 `LICENSE` 文件
+
 > [!CAUTION]\
 > **不要在国内平台宣传该插件**\
 > **不要在 QQ 官方群聊发送*任何*可以看出你使用了第三方插件的截图**
