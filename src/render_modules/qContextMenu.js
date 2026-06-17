@@ -496,8 +496,8 @@ function getLegacyPicSearchUrl(imagePath) {
     return "";
   }
   const localPath = decodeURIComponent(imagePath);
-  const filePathArr = localPath.split("/");
-  const fileName = filePathArr[filePathArr.length - 1]?.split(".")?.[0]?.toUpperCase()?.replace("_0", "");
+  const filePathArr = localPath.replace(/\\/g, "/").split("/");
+  const fileName = filePathArr[filePathArr.length - 1]?.split(".")?.[0]?.toUpperCase()?.replace(/_0$/, "");
   if (!fileName) {
     return "";
   }
