@@ -23,9 +23,39 @@ jobs:
           npm install
           npm run build
           zip -r ./lite_tools_v4.zip ./dist ./src ./icon.png ./LICENSE ./manifest.json ./package.json ./README.md
+      - name: Verify release package
+        run: |
+          set -euo pipefail
+          unzip -Z1 ./lite_tools_v4.zip > ./zip_entries.txt
+
+          required_files=(
+            "manifest.json"
+            "package.json"
+            "LICENSE"
+            "README.md"
+            "dist/main.js"
+            "src/renderer.js"
+          )
+
+          for file in "${required_files[@]}"; do
+            if ! grep -Fxq "$file" ./zip_entries.txt; then
+              echo "::error::Release package is missing required file: $file"
+              exit 1
+            fi
+          done
+
+          if grep -Eq '(^|/)node_modules/|^\.git/' ./zip_entries.txt; then
+            echo "::error::Release package contains files that should not be published"
+            exit 1
+          fi
+
+          sha256sum ./lite_tools_v4.zip > ./lite_tools_v4.zip.sha256
+          cat ./lite_tools_v4.zip.sha256
       - name: Upload Release File
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: lite_tools_v4.zip
+          files: |
+            lite_tools_v4.zip
+            lite_tools_v4.zip.sha256
           body_path: ./release.md

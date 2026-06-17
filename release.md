@@ -9,6 +9,12 @@
 - 不再做图片链接有效性预校验，避免右键搜索时卡住十几秒才打开浏览器。
 - 仓库和更新入口改为 `yun-xiao1/lite-tools`。
 
+### 发布
+
+- Release 自动检查压缩包内容，缺少 `manifest.json`、`package.json`、`LICENSE`、`dist/main.js` 或 `src/renderer.js` 时会直接失败。
+- Release 同时发布 `lite_tools_v4.zip.sha256`，用于校验下载文件完整性。
+- README 增加 GitHub 官方下载、SHA256 和备用镜像下载入口。
+
 ### 环境
 
 - QQNT：`9.9.20-37051` x64

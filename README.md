@@ -35,7 +35,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | --- | --- |
 | QQNT | `9.9.20-37051` x64 |
 | LiteLoaderQQNT | `1.2.4` |
-| 轻量工具箱 | `2.33.15`，基于原版 `2.33.14` |
+| 轻量工具箱 | `2.33.16`，基于原版 `2.33.14` |
 | 系统 | Windows |
 
 其他 QQ 或 LiteLoaderQQNT 版本可能会出现右键菜单、图片搜索、聊天记录页面等功能表现不一致的问题。
@@ -57,7 +57,15 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 正式包：
 
-[lite_tools_v4.zip](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.15/lite_tools_v4.zip)
+- GitHub 官方下载：[lite_tools_v4.zip](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.16/lite_tools_v4.zip)
+- SHA256 校验：[lite_tools_v4.zip.sha256](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.16/lite_tools_v4.zip.sha256)
+
+备用下载：
+
+- 镜像 1：[gh.llkk.cc](https://gh.llkk.cc/https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.16/lite_tools_v4.zip)
+- 镜像 2：[gh-proxy.com](https://gh-proxy.com/https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.16/lite_tools_v4.zip)
+
+备用镜像不保证长期可用。如果镜像下载失败，请换回 GitHub 官方下载或稍后重试。
 
 安装方法：
 
