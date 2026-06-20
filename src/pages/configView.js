@@ -20,76 +20,11 @@ import { openChangeLog } from "../render_modules/openChangeLog.js";
 import { getAuthData } from "../render_modules/nativeCall.js";
 // 配置属性读写模块
 import { getValueByPath, setValueByPath } from "../render_modules/ObjectPathUtils.js";
+import { WORD_SEARCH_PRESETS, IMAGE_SEARCH_PRESETS, findSearchPreset, resolveSearchUrl } from "../render_modules/searchPresets.js";
 // 配置界面日志
 import { Logs } from "../render_modules/logs.js";
 import { showToast, clearToast } from "../render_modules/toast.js";
 const log = new Logs("配置界面");
-
-const WORD_SEARCH_PRESETS = [
-  {
-    key: "bing",
-    name: "Bing",
-    url: "https://www.bing.com/search?q=%search%",
-  },
-  {
-    key: "google",
-    name: "Google",
-    url: "https://www.google.com/search?q=%search%",
-  },
-  {
-    key: "baidu",
-    name: "百度",
-    url: "https://www.baidu.com/s?wd=%search%",
-  },
-  {
-    key: "duckduckgo",
-    name: "DuckDuckGo",
-    url: "https://duckduckgo.com/?q=%search%",
-  },
-  {
-    key: "custom",
-    name: "自定义",
-    url: "",
-  },
-];
-
-const IMAGE_SEARCH_PRESETS = [
-  {
-    key: "google_legacy",
-    name: "Google旧版(推荐)",
-    url: "https://www.google.com/searchbyimage?client=app&image_url=%search%",
-  },
-  {
-    key: "google_lens",
-    name: "GoogleLens(选完全相符)",
-    url: "https://lens.google.com/uploadbyurl?url=%search%",
-  },
-  {
-    key: "yandex_ru",
-    name: "Yandex.ru(设置关过滤)",
-    url: "https://yandex.ru/images/search?url=%search%",
-  },
-  {
-    key: "yandex_com",
-    name: "Yandex.com(锁区)",
-    url: "https://yandex.com/images/search?rpt=imageview&url=%search%",
-  },
-  {
-    key: "saucenao",
-    name: "SauceNAO",
-    url: "https://saucenao.com/search.php?url=%search%",
-  },
-  {
-    key: "bing",
-    name: "Bing",
-    url: "https://www.bing.com/images/search?view=detailv2&iss=sbi&form=SBIIRP&sbisrc=UrlPaste&q=imgurl:%search%",
-  },
-  {
-    key: "custom",
-    name: "自定义",
-    url: "",
-  },
-];
 
 /**
  * 打开设置界面时触发
@@ -358,7 +293,7 @@ async function onConfigView(view) {
 
   function initSearchPresetSelect({ selectEl, inputEl, config, presets, defaultPreset }) {
     const matchedPreset = presets.find((preset) => preset.url && preset.url === config.searchUrl);
-    const initialPreset = config.preset ?? matchedPreset?.key ?? defaultPreset;
+    const initialPreset = matchedPreset?.key ?? config.preset ?? defaultPreset;
     const preset = presets.find((item) => item.key === initialPreset) ?? presets.find((item) => item.key === defaultPreset);
     const optionEl = selectEl.querySelector(".setting-option");
 
@@ -371,10 +306,8 @@ async function onConfigView(view) {
       optionEl.appendChild(itemEl);
       itemEl.addEventListener("click", () => {
         config.preset = item.key;
-        if (item.url) {
-          config.searchUrl = item.url;
-          inputEl.value = item.url;
-        }
+        config.searchUrl = item.url;
+        inputEl.value = item.url;
         setSearchPresetView(selectEl, presets, item.key);
         lite_tools.setOptions(options);
       });
@@ -383,15 +316,14 @@ async function onConfigView(view) {
       selectEl.querySelector(".setting-option")?.classList.toggle("show");
     });
 
-    if (!config.preset) {
-      config.preset = preset.key;
-    }
+    config.preset = preset.key;
+    config.searchUrl = resolveSearchUrl(config, presets);
     inputEl.value = config.searchUrl;
-    setSearchPresetView(selectEl, presets, config.preset);
+    setSearchPresetView(selectEl, presets, preset.key);
   }
 
   function setSearchPresetView(selectEl, presets, presetKey) {
-    const preset = presets.find((item) => item.key === presetKey) ?? presets.find((item) => item.key === "custom");
+    const preset = findSearchPreset(presets, presetKey) ?? findSearchPreset(presets, "custom");
     selectEl.querySelector(".setting-view")?.setAttribute("data-value", preset?.name ?? "自定义");
     selectEl.querySelectorAll(".setting-item").forEach((item) => {
       item.classList.toggle("selected", item.getAttribute("data-value") === preset?.key);

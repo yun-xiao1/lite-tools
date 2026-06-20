@@ -35,7 +35,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 | --- | --- |
 | QQNT | `9.9.20-37051` x64 |
 | LiteLoaderQQNT | `1.2.4` |
-| 轻量工具箱 | `2.33.17`，基于原版 `2.33.14` |
+| 轻量工具箱 | `2.33.18`，基于原版 `2.33.14` |
 | 系统 | Windows |
 
 其他 QQ 或 LiteLoaderQQNT 版本可能会出现右键菜单、图片搜索、聊天记录页面等功能表现不一致的问题。
@@ -46,6 +46,7 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 - 支持在聊天记录窗口使用 `右键菜单 > 划词搜索`。
 - 实验支持在聊天记录窗口使用 `右键菜单 > 图片搜索`。
 - 划词搜索和图片搜索支持在设置页选择常用预设搜索源，也可以继续使用自定义链接。
+- 修复搜索源下拉选择后右键菜单仍沿用旧链接的问题。
 - 搜索源默认不自动填写，首次使用需要选择预设或手动输入链接。
 - 右键菜单监听改为在渲染进程通用入口初始化，避免聊天记录页面未加载聊天页模块时右键菜单不生效。
 - 图片搜索在聊天记录里拿不到普通聊天消息数据时，会尝试从右键目标附近提取 `appimg://` 图片地址，并回退到旧版图片链接解析。
@@ -59,13 +60,13 @@ LiteLoaderQQNT 本体：[LiteLoaderQQNT](https://github.com/mo-jinran/LiteLoader
 
 正式包：
 
-- GitHub 官方下载：[lite_tools_v4.zip](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.17/lite_tools_v4.zip)
-- SHA256 校验：[lite_tools_v4.zip.sha256](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.17/lite_tools_v4.zip.sha256)
+- GitHub 官方下载：[lite_tools_v4.zip](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.18/lite_tools_v4.zip)
+- SHA256 校验：[lite_tools_v4.zip.sha256](https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.18/lite_tools_v4.zip.sha256)
 
 备用下载：
 
-- 镜像 1：[gh.llkk.cc](https://gh.llkk.cc/https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.17/lite_tools_v4.zip)
-- 镜像 2：[gh-proxy.com](https://gh-proxy.com/https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.17/lite_tools_v4.zip)
+- 镜像 1：[gh.llkk.cc](https://gh.llkk.cc/https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.18/lite_tools_v4.zip)
+- 镜像 2：[gh-proxy.com](https://gh-proxy.com/https://github.com/yun-xiao1/lite-tools/releases/download/v2.33.18/lite_tools_v4.zip)
 
 备用镜像不保证长期可用。如果镜像下载失败，请换回 GitHub 官方下载或稍后重试。
 

@@ -3,6 +3,7 @@ import { localEmoticonsIcon, searchIcon, imageIcon } from "./svg.js";
 import { subMenuIconEl } from "./HTMLtemplate.js";
 import { emoticonsList } from "./localEmoticons.js";
 import { getPicUrl } from "./getPicUrl.js";
+import { WORD_SEARCH_PRESETS, IMAGE_SEARCH_PRESETS, resolveSearchUrl } from "./searchPresets.js";
 import "./wrapText.js";
 import { showToast } from "./toast.js";
 import { Logs } from "./logs.js";
@@ -754,22 +755,27 @@ function addEventqContextMenu() {
         });
       }
 
+      const latestOptions = lite_tools.getOptions?.() ?? options;
+      const latestQContextMenu = latestOptions.qContextMenu ?? options.qContextMenu;
+
       // 在网页搜索
-      if (isRightClick && selectText.length && options.qContextMenu.wordSearch.enabled && options.qContextMenu.wordSearch.searchUrl?.trim()) {
+      const wordSearchUrl = resolveSearchUrl(latestQContextMenu.wordSearch, WORD_SEARCH_PRESETS);
+      if (isRightClick && selectText.length && latestQContextMenu.wordSearch.enabled && wordSearchUrl?.trim()) {
         const searchText = selectText;
         addQContextMenu(qContextMenu, searchIcon, "搜索: " + strTruncate(selectText, 4), () => {
-          lite_tools.openWeb(options.qContextMenu.wordSearch.searchUrl.replace("%search%", encodeURIComponent(searchText)));
+          lite_tools.openWeb(wordSearchUrl.replace("%search%", encodeURIComponent(searchText)));
         });
       }
       // 搜索图片
-      if ((searchImageData || legacySearchImageUrl) && options.qContextMenu.imageSearch.enabled && options.qContextMenu.imageSearch.searchUrl?.trim()) {
+      const imageSearchUrl = resolveSearchUrl(latestQContextMenu.imageSearch, IMAGE_SEARCH_PRESETS);
+      if ((searchImageData || legacySearchImageUrl) && latestQContextMenu.imageSearch.enabled && imageSearchUrl?.trim()) {
         const _searchImageData = searchImageData;
         const _legacySearchImageUrl = legacySearchImageUrl;
         addQContextMenu(qContextMenu, searchIcon, "搜索图片", async () => {
           const searchImageUrl = _searchImageData
             ? encodeURIComponent(await getPicUrl(_searchImageData.picData, _searchImageData.chatType))
             : encodeURIComponent(_legacySearchImageUrl);
-          const openUrl = options.qContextMenu.imageSearch.searchUrl.replace("%search%", searchImageUrl);
+          const openUrl = imageSearchUrl.replace("%search%", searchImageUrl);
           lite_tools.openWeb(openUrl);
         });
       }
