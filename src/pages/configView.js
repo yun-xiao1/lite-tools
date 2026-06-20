@@ -271,6 +271,14 @@ async function onConfigView(view) {
     setSearchPresetView(view.querySelector('[data-search-preset="word"]'), WORD_SEARCH_PRESETS, "custom");
     debounceSetOptions();
   });
+  view.querySelector(".save-word-search-url").addEventListener("click", () => {
+    saveSearchConfig({
+      selectEl: view.querySelector('[data-search-preset="word"]'),
+      inputEl: searchEl,
+      config: options.qContextMenu.wordSearch,
+      presets: WORD_SEARCH_PRESETS,
+    });
+  });
 
   // 图片搜索
   addSwitchEventlistener("qContextMenu.imageSearch.enabled", ".switchImageSearch", (_, enabled) => {
@@ -289,6 +297,14 @@ async function onConfigView(view) {
     options.qContextMenu.imageSearch.preset = "custom";
     setSearchPresetView(view.querySelector('[data-search-preset="image"]'), IMAGE_SEARCH_PRESETS, "custom");
     debounceSetOptions();
+  });
+  view.querySelector(".save-image-search-url").addEventListener("click", () => {
+    saveSearchConfig({
+      selectEl: view.querySelector('[data-search-preset="image"]'),
+      inputEl: imgSearchEl,
+      config: options.qContextMenu.imageSearch,
+      presets: IMAGE_SEARCH_PRESETS,
+    });
   });
 
   function initSearchPresetSelect({ selectEl, inputEl, config, presets, defaultPreset }) {
@@ -328,6 +344,16 @@ async function onConfigView(view) {
     selectEl.querySelectorAll(".setting-item").forEach((item) => {
       item.classList.toggle("selected", item.getAttribute("data-value") === preset?.key);
     });
+  }
+
+  function saveSearchConfig({ selectEl, inputEl, config, presets }) {
+    const nextUrl = inputEl.value.trim();
+    const matchedPreset = presets.find((preset) => preset.url && preset.url === nextUrl);
+    config.searchUrl = nextUrl;
+    config.preset = matchedPreset?.key ?? "custom";
+    setSearchPresetView(selectEl, presets, config.preset);
+    lite_tools.setOptions(options);
+    showToast("已保存，右键菜单会立即使用新设置", "success", 3000);
   }
 
   // 头像黏贴消息框效果
